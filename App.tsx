@@ -3,8 +3,9 @@ import { View, StyleSheet, Text, TextInput } from 'react-native';
 import DefaultProps, { getCleanDefaultProps } from './src/abstract/DefaultProps';
 import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import Konto1 from './src/components/Konto1';
-import Konto2 from './src/components/Konto2';
+import Account1 from './src/components/Konto1';
+import Account2 from './src/components/Konto2';
+import AccountView from './src/components/AccountView';
 
 
 export default function App(props: DefaultProps) {
@@ -13,22 +14,26 @@ export default function App(props: DefaultProps) {
     const Tab = createMaterialTopTabNavigator();
 
     return (
-        <View id={id} style={{...styles.App, ...style}}>
-            <NavigationContainer>
+        <NavigationContainer>
+            <View id={id} style={{...AppStyles.component, ...style}}>
+                {/* Top Nav */}
                 <Tab.Navigator>
-                    <Tab.Screen name="Konto1" component={Konto1}/>
-                    <Tab.Screen name="Konto2" component={Konto2}/>
+                    <Tab.Screen name="Account1" component={Account1}/>
+                    <Tab.Screen name="Account2" component={Account2}/>
                 </Tab.Navigator>
-            </NavigationContainer>
-        </View>
+            </View>
+        </NavigationContainer>
     )
 }
 
 
-const styles = StyleSheet.create({
-    App: {
-        backgroundColor: "white",
+export const AppStyles = StyleSheet.create({
+    // used by 'getCleanDefaultProps()'
+    default: {
         color: "black",
+    }, 
+
+    component: {
         flex: 1
     }
 });

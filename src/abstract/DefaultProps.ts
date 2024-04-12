@@ -1,5 +1,6 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleProp, StyleSheet } from "react-native";
+import { AppStyles } from "../../App";
 
 
 /**
@@ -7,15 +8,16 @@ import { StyleSheet } from "react-native";
  */
 export default interface DefaultProps {
     id?: string,
-    style?: StyleSheet.NamedStyles<any>,
+    style?: StyleSheet.AbsoluteFillStyle,
     children?: React.ReactNode
 }
 
 
-export function getCleanDefaultProps<T extends DefaultProps>(props: T): DefaultProps {
+export function getCleanDefaultProps<T extends DefaultProps>(props: T, componentName = ""): DefaultProps {
 
     return {
-        id: props.id || "",
-        ...props
+        id: componentName + (props.id || ""),
+        style: {...props.style, ...AppStyles.default},
+        children: props.children
     }
 }
