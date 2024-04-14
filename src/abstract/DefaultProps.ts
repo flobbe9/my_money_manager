@@ -1,6 +1,5 @@
 import React from "react";
 import { StyleProp, StyleSheet } from "react-native";
-import { AppStyles } from "../../App";
 
 
 /**
@@ -8,7 +7,7 @@ import { AppStyles } from "../../App";
  */
 export default interface DefaultProps {
     id?: string,
-    style?: StyleSheet.AbsoluteFillStyle,
+    style?: StyleProp<any>,
     children?: React.ReactNode
 }
 
@@ -17,7 +16,7 @@ export function getCleanDefaultProps<T extends DefaultProps>(props: T, component
 
     return {
         id: componentName + (props.id || ""),
-        style: {...props.style, ...AppStyles.default},
+        style: {...props.style},
         children: props.children
     }
 }
