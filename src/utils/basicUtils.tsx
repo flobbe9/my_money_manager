@@ -89,7 +89,7 @@ export function isBlank(str: string | undefined | null, debug = false): boolean 
     if (!str && str !== "") {
         if (debug)
             logError("Falsy input str: " + str);
-        return false;
+        return true;
     }
 
     str = str.trim();
@@ -568,6 +568,7 @@ export function logReturnNothing(debug: boolean, message?: string): void {
 }
 
 
+// TODO: tests
 export function dateEquals(d1: Date | undefined, d2: Date | undefined): boolean {
     
     // check undefined
@@ -580,18 +581,15 @@ export function dateEquals(d1: Date | undefined, d2: Date | undefined): boolean 
     } else if (!d2)
         return false;
 
-    // copy to new object
-    const date1 = new Date(d1);
-    const date2 = new Date(d2);
+    // copy to new object, dont consider time
+    const date1 = clearTimeFromDate(new Date(d1));
+    const date2 = clearTimeFromDate(new Date(d2));
     
-    // set time to 0, compare only date
-    clearTimeFromDate(date1);
-    clearTimeFromDate(date2);
-
     return date1.getTime() === date2.getTime();
 }
 
 
+// TODO: tests
 export function clearTimeFromDate(d: Date): Date {
 
     const date = new Date(d);
