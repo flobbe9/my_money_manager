@@ -1,49 +1,70 @@
 import DefaultProps, { getCleanDefaultProps } from "../../abstract/DefaultProps";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, StyleProp, Button } from "react-native";
 import { genericStyles } from "../../assets/styles/genericsStyles";
 import { log } from "../../utils/basicUtils";
-import AccountWrapper from "../../abstract/AccountWrapper";
+import AccountWrapper from "../../abstract/account/AccountWrapper";
 import BlackText from "../helpers/BlackText";
-import Flex from "../helpers/Flex";
 import { getRandomString } from '../../utils/basicUtils';
-import AccountEntry from "./AccountEntry";
-import AlignText from "../helpers/AlignText";
-import { sortEntriesByDate, splitEntriesByDate } from "../../abstract/AccountEntry";
 import AccountEntryContainer from "./AccountEntryContainer";
+import AccountEntryFilterWrapper from "../../abstract/account/AccountEntryFilterWrapper";
+import Checkbox from "expo-checkbox";
+import AccountEntryFilters from "./filter/AccountEntryFilters";
+import CheckboxNoState from "../helpers/CheckboxNoState";
+import AccountEntryWrapper from "../../abstract/account/AccountEntryWrapper";
 
 
 interface Props extends DefaultProps {
-    wrapper: AccountWrapper
+    account: AccountWrapper,
+    entryGroups: AccountEntryWrapper[][]
 }
 
 
-export default function Account({wrapper, ...props}: Props) {
+export default function Account({account, entryGroups, ...props}: Props) {
 
     const { id, style, children } = getCleanDefaultProps(props, "Account");
-    const { name, total, entries } = wrapper;
+    const { total } = account;
 
-    const [accountTotal, setAccountTotal] = useState(0);
+    const [filters, setFilters] = useState<AccountEntryFilterWrapper>(AccountEntryFilterWrapper.getDefaultInstance());
+    const [entries, setEntries] = useState<JSX.Element[]>();
+
+
+    useEffect(() => {
+        setEntries(mapEntryGroups());
+
+    }, []);
 
 
     function getAccountTotalStyle(): StyleProp<any> {
 
-        if (accountTotal < 0) 
+        if (total < 0) 
             return styles.accountTotalMinus;
 
-        if (accountTotal > 0) 
+        if (total > 0) 
             return styles.accountTotalPlus;
 
         return {}
     }
 
 
-    function mapEntries(): JSX.Element[] {
+    /**
+     * Sort given account entries into groups by ```date```. Sort entries inside groups by ```created```. Pass filters to components.
+     * 
+     * @returns array of ```<AccountEntryContainer />```s for each entry group.
+     */
+    function mapEntryGroups(): JSX.Element[] {
 
         const accountEntryContainers: JSX.Element[] = [];
 
-        for (const entryGroup of splitEntriesByDate(entries)) 
-            accountEntryContainers.push(<AccountEntryContainer key={getRandomString()} entries={entryGroup} />);
+        for (const entryGroup of entryGroups) {
+            accountEntryContainers.push(
+                <AccountEntryContainer 
+                    key={getRandomString()} 
+                    entryGroup={entryGroup} 
+                    filters={filters}
+                    />
+            );
+        }
         
         return accountEntryContainers;
     }
@@ -54,17 +75,19 @@ export default function Account({wrapper, ...props}: Props) {
             {/* Total */}
             <Text 
                 style={{
-                // ...styles.component, 
                 ...styles.accountTotal, 
                 ...getAccountTotalStyle(),
                 ...genericStyles.mb4
                 }}
             >
-                {accountTotal}
+                {total}
             </Text>
 
+            {/* Filters */}
+            <AccountEntryFilters filters={filters} setFilters={setFilters} />
+
             {/* Entries */}
-            {mapEntries()}
+            {entries}
 
             {children}
         </View>
@@ -74,7 +97,6 @@ export default function Account({wrapper, ...props}: Props) {
 
 const styles = StyleSheet.create({
     component: {
-        color: "black"
     },
 
     accountTotal: {

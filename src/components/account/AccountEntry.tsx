@@ -3,11 +3,11 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, StyleProp, Button } from "react-native";
 import { genericStyles } from "../../assets/styles/genericsStyles";
 import { isBlank, log } from "../../utils/basicUtils";
-import AccountWrapper from "../../abstract/AccountWrapper";
+import AccountWrapper from "../../abstract/account/AccountWrapper";
 import BlackText from "../helpers/BlackText";
 import Flex from "../helpers/Flex";
 import { getRandomString } from '../../utils/basicUtils';
-import Entry from "../../abstract/AccountEntry";
+import Entry from "../../abstract/account/AccountEntryWrapper";
 
 
 interface Props extends DefaultProps {
@@ -23,16 +23,6 @@ export default function AccountEntry({entry, ...props}: Props) {
 
     const { id, style, children } = getCleanDefaultProps(props, "AccountEntry");
     const { amount, note, category, date } = entry;
-
-
-    function getNote(): JSX.Element {
-
-        if (isBlank(note)) 
-            return <BlackText>asdf</BlackText>;
-        
-
-        return <BlackText>{note}</BlackText>
-    }
 
 
     return (

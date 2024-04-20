@@ -1,5 +1,5 @@
+import AccountEntry from "./AccountEntryWrapper";
 
-import AccountEntry from "./AccountEntry";
 
 // TODO: validation methods for all interfaces
 // TODO: parsing methods
