@@ -8,6 +8,7 @@ import Test from './src/components/Test';
 import { clearTimeFromDate, getRandomString } from './src/utils/basicUtils';
 import { genericStyles } from './src/assets/styles/genericsStyles';
 import AccountWrapper from './src/abstract/AccountWrapper';
+import { createRealmContext } from '@realm/react';
 
 
 const testWrappers: AccountWrapper[] = [

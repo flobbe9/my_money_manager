@@ -30,7 +30,6 @@ export default function AccountEntryContainer({entries, ...otherProps}: Props) {
     if (!entries.length)
         return <></>;
 
-
     return (
         <View id={id} style={{...style, ...styles.component}}>
 
