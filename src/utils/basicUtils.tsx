@@ -603,6 +603,18 @@ export function clearTimeFromDate(d: Date): Date {
 }
 
 
+export function datePlusYears(years: number, date = new Date()): Date {
+
+    if (isNumberFalsy(years))
+        return date;
+
+    const dateYears = date.getFullYear();
+    date.setFullYear(dateYears + years);
+
+    return date;
+}
+
+
 /**
  * @param date to format, default is ```new Date()```
  * @returns nicely formatted string formatted like ```year-month-date hours:minutes:seconds:milliseconds```

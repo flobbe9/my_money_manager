@@ -7,7 +7,8 @@ import Account from './src/components/account/Account';
 import Test from './src/components/Test';
 import { clearTimeFromDate, getRandomString } from './src/utils/basicUtils';
 import { genericStyles } from './src/assets/styles/genericsStyles';
-import AccountWrapper from './src/abstract/AccountWrapper';
+import AccountWrapper from './src/abstract/account/AccountWrapper';
+import AccountEntryWrapper from './src/abstract/account/AccountEntryWrapper';
 
 
 const testWrappers: AccountWrapper[] = [
@@ -18,10 +19,10 @@ const testWrappers: AccountWrapper[] = [
             {
                 amount: 2,
                 category: {
-                    name: "Monthly"
+                    name: "shopping"
                 },
                 date: new Date("2024-04-14"),
-                created: new Date("2024-04-14T15:40:45.498Z")
+                created: new Date("2024-04-13T15:40:45.498Z")
             },
             {
                 amount: 1,
@@ -29,7 +30,7 @@ const testWrappers: AccountWrapper[] = [
                     name: "Monthly"
                 },
                 date: new Date("2024-04-14"),
-                created: new Date("2024-04-14T15:40:45.498Z")
+                created: new Date("2024-04-10T15:40:45.498Z")
             },
             {
                 amount: 3,
@@ -37,7 +38,7 @@ const testWrappers: AccountWrapper[] = [
                     name: "Monthly"
                 },
                 date: new Date("2024-04-14"),
-                created: new Date("2024-04-14T15:40:45.498Z")
+                created: new Date("2024-04-16T15:40:45.498Z")
             }
         ]
     },
@@ -51,13 +52,21 @@ const testWrappers: AccountWrapper[] = [
                     name: "Monthly"
                 },
                 date: new Date("12-31-2000"),
-                created: new Date("2024-04-14T15:40:45.498Z")
+                created: new Date("2023-04-14T15:40:45.498Z")
             }
         ]
     }
 ]
 
 
+// TODO: search by
+    // amount
+    // category
+    // note
+
+// TODO: biometrics?
+// TODO: offer pin lock
+// TODO: turn interfaces into classes
 export default function App(props: DefaultProps) {
 
     const { id, style } = getCleanDefaultProps(props);
@@ -67,14 +76,30 @@ export default function App(props: DefaultProps) {
 
 
     useEffect(() => {
-        // TODO: fetch accounts instead
-        setAccounts(testWrappers.map(wrapper => 
-            <Tab.Screen key={getRandomString()} name={wrapper.name}>
-                {() => <Account wrapper={wrapper}/>}
-            </Tab.Screen>)
-        )
+        // TODO: fetch accounts instead, cache somehow
+        setAccounts(testWrappers.map(account => {
+            AccountEntryWrapper.sortEntriesByDate(account.entries);
+
+            return (
+                <Tab.Screen key={getRandomString()} name={account.name}>
+                    {
+                        () => <Account 
+                                account={account} 
+                                entryGroups={getAccountEntryGroups(account)} 
+                                />
+                    }
+                </Tab.Screen>
+            )
+        }))
 
     }, []);
+
+
+    function getAccountEntryGroups(account: AccountWrapper): AccountEntryWrapper[][] {
+
+        return AccountEntryWrapper.splitEntriesByDate(account.entries).map(entryGroup => 
+            AccountEntryWrapper.sortEntriesByCreated(entryGroup))
+    }
 
 
     return (
