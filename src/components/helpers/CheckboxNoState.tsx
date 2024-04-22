@@ -1,6 +1,7 @@
 import Checkbox from "expo-checkbox";
 import React, { useState } from "react";
 import DefaultProps, { getCleanDefaultProps } from "../../abstract/DefaultProps";
+import { log } from "../../utils/basicUtils";
 
 
 interface Props extends DefaultProps {

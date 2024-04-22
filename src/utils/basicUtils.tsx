@@ -1,9 +1,10 @@
+import { Results } from "realm";
 import { ApiExceptionFormat } from "../abstract/ApiExceptionFormat";
 import { ENV, KEY_CODES_GERMAN_LETTERS } from "./constants";
 import { fetchAnyReturnBlobUrl } from "./fetchUtils";
 
 
-export function log(text?: any, debug = false): void {
+export function log(text?: any, obj?: any, debug = false): void {
 
     if (!debug) {
         console.log(text);
@@ -16,6 +17,8 @@ export function log(text?: any, debug = false): void {
     } catch (e) {
         console.log(e);
     }
+
+    console.log(obj);
 }
 
 
@@ -612,6 +615,12 @@ export function datePlusYears(years: number, date = new Date()): Date {
     date.setFullYear(dateYears + years);
 
     return date;
+}
+
+
+export function resultsToArray<T>(results: Results<T>): T[] {
+
+    return results.map(entity => entity);
 }
 
 

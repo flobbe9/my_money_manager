@@ -1,23 +1,26 @@
-import { BSON, ObjectSchema, Realm } from "realm";
+import { ObjectSchema, Realm } from "realm";
 
 
-export default abstract class AbstractEntity extends Realm.Object<AbstractEntity> {
+/**
+ * Abstract superclass for any realm schema class.
+ * 
+ * @since 0.0.1
+ */
+export default abstract class AbstractEntity<T extends AbstractEntity<T>> extends Realm.Object<T> {
 
-    id: number;
+    id!: number;
 
     created: Date;
 
     updated: Date;
-    
-    static schema: ObjectSchema = {
-        name: "AbstractEntity",
-        properties: {
-            id: "number",
 
-            created: "Date",
-        
-            updated: "Date"
-        },
-        primaryKey: "id"
+
+    static DEFAULT_SCHEMA_PROPS = {
+
+        id: "int",
+
+        created: "date?",
+
+        updated: "date?"
     }
 }

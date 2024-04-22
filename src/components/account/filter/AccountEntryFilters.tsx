@@ -1,27 +1,18 @@
 import React, { ReactNode } from "react";
 import DefaultProps, { getCleanDefaultProps } from "../../../abstract/DefaultProps";
 import { Text, View } from "react-native";
-import AccountEntryFilterWrapper from "../../../abstract/account/AccountEntryFilterWrapper";
 import BlackText from "../../helpers/BlackText";
 import { genericStyles } from "../../../assets/styles/genericsStyles";
 import AccountEntryCategoryFilter from "./AccountEntryCategoryFilter";
-import AccountEntryCategoryWrapper from "../../../abstract/account/AccountEntryCategoryWrapper";
-
-
-// TODO: replace with  real data
-const allCagetories: AccountEntryCategoryWrapper[] = [
-    {
-        name: "Monthly"
-    },
-    {
-        name: "shopping"
-    },
-]
+import E_AccountEntryCategory from "../../../entities/account/E_AccountEntryCategory";
+import AccountEntryFilter from "../../../abstract/AccountEntryFilter";
+import { useRealm } from "@realm/react";
+import Dao from "../../../repositories/Dao";
 
 
 interface Props extends DefaultProps {
-    filters: AccountEntryFilterWrapper,
-    setFilters: (accountEntryFilterWrapper: AccountEntryFilterWrapper) => void
+    filters: AccountEntryFilter,
+    setFilters: (accountEntryFilter: AccountEntryFilter) => void
 }
 
 
@@ -36,7 +27,7 @@ export default function AccountEntryFilters({filters, setFilters, ...otherProps}
     return (
         <View style={{...style}}>
             {/* Categories */}
-            <AccountEntryCategoryFilter filters={filters} setFilters={setFilters} allCategories={allCagetories} />
+            <AccountEntryCategoryFilter filters={filters} setFilters={setFilters} />
 
             {children}
         </View>

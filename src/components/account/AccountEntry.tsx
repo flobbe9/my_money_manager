@@ -3,15 +3,14 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, StyleProp, Button } from "react-native";
 import { genericStyles } from "../../assets/styles/genericsStyles";
 import { isBlank, log } from "../../utils/basicUtils";
-import AccountWrapper from "../../abstract/account/AccountWrapper";
 import BlackText from "../helpers/BlackText";
 import Flex from "../helpers/Flex";
 import { getRandomString } from '../../utils/basicUtils';
-import Entry from "../../abstract/account/AccountEntryWrapper";
+import E_AccountEntry from "../../entities/account/E_AccountEntry";
 
 
 interface Props extends DefaultProps {
-    entry: Entry
+    entry: E_AccountEntry
 }
 
 
@@ -22,7 +21,7 @@ interface Props extends DefaultProps {
 export default function AccountEntry({entry, ...props}: Props) {
 
     const { id, style, children } = getCleanDefaultProps(props, "AccountEntry");
-    const { amount, note, category, date } = entry;
+    const { amount, note, category } = entry;
 
 
     return (

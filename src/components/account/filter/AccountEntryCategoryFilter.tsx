@@ -1,19 +1,20 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import DefaultProps, { getCleanDefaultProps } from "../../../abstract/DefaultProps";
 import { Text, View } from "react-native";
-import AccountEntryFilterWrapper from "../../../abstract/account/AccountEntryFilterWrapper";
 import BlackText from "../../helpers/BlackText";
 import { genericStyles } from "../../../assets/styles/genericsStyles";
-import AccountEntryCategoryWrapper from "../../../abstract/account/AccountEntryCategoryWrapper";
+import E_AccountEntryCategory from "../../../entities/account/E_AccountEntryCategory";
 import { getRandomString, log } from "../../../utils/basicUtils";
 import Flex from "../../helpers/Flex";
 import Checkbox from "../../helpers/CheckboxNoState";
+import AccountEntryFilter from "../../../abstract/AccountEntryFilter";
+import { useRealm } from "@realm/react";
+import Dao from "../../../repositories/Dao";
 
 
 interface Props extends DefaultProps {
-    allCategories: AccountEntryCategoryWrapper[],
-    filters: AccountEntryFilterWrapper,
-    setFilters: (accountEntryFilterWrapper: AccountEntryFilterWrapper) => void
+    filters: AccountEntryFilter,
+    setFilters: (accountEntryFilters: AccountEntryFilter) => void
 }
 
 
@@ -21,9 +22,11 @@ interface Props extends DefaultProps {
  * @since 0.0.1
  */
 // TODO: make value listener faster
-export default function AccountEntryCategoryFilter({allCategories, filters, setFilters, ...otherProps}: Props) {
+export default function AccountEntryCategoryFilter({filters, setFilters, ...otherProps}: Props) {
 
     const { style, children } = getCleanDefaultProps(otherProps, "AccountEntryCategoryFilter");
+
+    const dao = new Dao(useRealm());
 
 
     /**
@@ -42,19 +45,21 @@ export default function AccountEntryCategoryFilter({allCategories, filters, setF
      * 
      * @param category to add or remove
      */
-    function handleValueChange(category: AccountEntryCategoryWrapper): void {
+    function handleValueChange(category: E_AccountEntryCategory): void {
 
-        if (AccountEntryCategoryWrapper.includes(filters.categories, category))
-            AccountEntryCategoryWrapper.remove(filters.categories, category);
+        if (E_AccountEntryCategory.includes(filters.categories, category))
+            E_AccountEntryCategory.remove(filters.categories, category);
 
         else 
-            AccountEntryCategoryWrapper.pushAvoidDuplicate(filters.categories, category);
+            E_AccountEntryCategory.pushAvoidDuplicate(filters.categories, category);
 
         updateFilters();
     }
 
 
     function mapCheckboxes(): JSX.Element[] {
+
+        const allCategories = dao.findAll(E_AccountEntryCategory);
 
         return allCategories.map(category =>
             <Flex flex="left" key={getRandomString()}>
@@ -65,7 +70,7 @@ export default function AccountEntryCategoryFilter({allCategories, filters, setF
                 <Checkbox 
                     style={{height: 30, width: 30}}
                     onValueChange={() => handleValueChange(category)}
-                    defaultValue={AccountEntryCategoryWrapper.includes(filters.categories, category)}
+                    defaultValue={E_AccountEntryCategory.includes(filters.categories, category)}
                     />
             </Flex>
         )

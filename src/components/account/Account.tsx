@@ -1,37 +1,46 @@
 import DefaultProps, { getCleanDefaultProps } from "../../abstract/DefaultProps";
-import React, { useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, StyleProp, Button } from "react-native";
 import { genericStyles } from "../../assets/styles/genericsStyles";
 import { log } from "../../utils/basicUtils";
-import AccountWrapper from "../../abstract/account/AccountWrapper";
-import BlackText from "../helpers/BlackText";
+import E_Account from "../../entities/account/E_Account";
 import { getRandomString } from '../../utils/basicUtils';
 import AccountEntryContainer from "./AccountEntryContainer";
-import AccountEntryFilterWrapper from "../../abstract/account/AccountEntryFilterWrapper";
-import Checkbox from "expo-checkbox";
 import AccountEntryFilters from "./filter/AccountEntryFilters";
-import CheckboxNoState from "../helpers/CheckboxNoState";
-import AccountEntryWrapper from "../../abstract/account/AccountEntryWrapper";
+import E_AccountEntry from "../../entities/account/E_AccountEntry";
+import { useRealm } from "@realm/react";
+import E_AccountEntryFilter from "../../abstract/AccountEntryFilter";
+import AccountEntryFilter from "../../abstract/AccountEntryFilter";
+import E_AccountEntryCategory from "../../entities/account/E_AccountEntryCategory";
+import Dao from "../../repositories/Dao";
 
 
 interface Props extends DefaultProps {
-    account: AccountWrapper,
-    entryGroups: AccountEntryWrapper[][]
+    account: E_Account,
+    groupedEntries: E_AccountEntry[][]
 }
 
 
-export default function Account({account, entryGroups, ...props}: Props) {
+export default function Account({account, groupedEntries, ...props}: Props) {
 
     const { id, style, children } = getCleanDefaultProps(props, "Account");
     const { total } = account;
-
-    const [filters, setFilters] = useState<AccountEntryFilterWrapper>(AccountEntryFilterWrapper.getDefaultInstance());
+    
+    // init value is "no filters applied"
+    const [filters, setFilters] = useState<AccountEntryFilter>(AccountEntryFilter.getDefaultInstance());
     const [entries, setEntries] = useState<JSX.Element[]>();
+
+    const context = {
+        filters
+    }
+
+    const realm = useRealm();
+    const dao = new Dao(realm);
 
 
     useEffect(() => {
-        setEntries(mapEntryGroups());
-
+        setEntries(mapGroupedEntries());
+        
     }, []);
 
 
@@ -52,16 +61,15 @@ export default function Account({account, entryGroups, ...props}: Props) {
      * 
      * @returns array of ```<AccountEntryContainer />```s for each entry group.
      */
-    function mapEntryGroups(): JSX.Element[] {
+    function mapGroupedEntries(): JSX.Element[] {
 
         const accountEntryContainers: JSX.Element[] = [];
 
-        for (const entryGroup of entryGroups) {
+        for (const entriesOneDay of groupedEntries) {
             accountEntryContainers.push(
                 <AccountEntryContainer 
                     key={getRandomString()} 
-                    entryGroup={entryGroup} 
-                    filters={filters}
+                    entriesOneDay={entriesOneDay} 
                     />
             );
         }
@@ -71,26 +79,28 @@ export default function Account({account, entryGroups, ...props}: Props) {
 
 
     return (
-        <View id={id} style={{...style}}>
-            {/* Total */}
-            <Text 
-                style={{
-                ...styles.accountTotal, 
-                ...getAccountTotalStyle(),
-                ...genericStyles.mb4
-                }}
-            >
-                {total}
-            </Text>
+        <AccountContext.Provider value={context}>
+            <View id={id} style={{...style}}>
+                {/* Total */}
+                <Text 
+                    style={{
+                    ...styles.accountTotal, 
+                    ...getAccountTotalStyle(),
+                    ...genericStyles.mb4
+                    }}
+                >
+                    {total}
+                </Text>
 
-            {/* Filters */}
-            <AccountEntryFilters filters={filters} setFilters={setFilters} />
+                {/* Filters */}
+                <AccountEntryFilters filters={filters} setFilters={setFilters} />
 
-            {/* Entries */}
-            {entries}
+                {/* Entries */}
+                {entries}
 
-            {children}
-        </View>
+                {children}
+            </View>
+        </AccountContext.Provider>
     )
 }
 
@@ -113,3 +123,8 @@ const styles = StyleSheet.create({
         color: "red"
     }
 });
+
+
+export const AccountContext = createContext({
+    filters: AccountEntryFilter.getDefaultInstance()
+})

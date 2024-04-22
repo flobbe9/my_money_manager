@@ -1,25 +1,25 @@
 import DefaultProps, { getCleanDefaultProps } from "../../abstract/DefaultProps";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, StyleProp, Button } from "react-native";
 import { genericStyles } from "../../assets/styles/genericsStyles";
 import { log } from "../../utils/basicUtils";
 import BlackText from "../helpers/BlackText";
 import Flex from "../helpers/Flex";
 import { getRandomString } from '../../utils/basicUtils';
-import AccountEntryWrapper from "../../abstract/account/AccountEntryWrapper";
+import E_AccountEntry from "../../entities/account/E_AccountEntry";
 import AccountEntry from "./AccountEntry";
 import AlignText from './../helpers/AlignText';
-import AccountEntryFilterWrapper from "../../abstract/account/AccountEntryFilterWrapper";
+import AccountEntryFilter from "../../abstract/AccountEntryFilter";
+import { AccountContext } from "./Account";
 
 
 interface Props extends DefaultProps {
-    entryGroup: AccountEntryWrapper[],
-    filters?: AccountEntryFilterWrapper
+    entriesOneDay: E_AccountEntry[],
 }
 
 
 /**
- * Holds list of entryGroup of one day.
+ * Holds list of entriesOneDay of one day.
  * 
  * @since 0.0.1
  */
@@ -27,25 +27,20 @@ interface Props extends DefaultProps {
     // by note, substring or something
     // by amount
     // by date
-export default function AccountEntryContainer({entryGroup, filters, ...otherProps}: Props) {
+export default function AccountEntryContainer({entriesOneDay, ...otherProps}: Props) {
 
-    // case: no entryGroup
-    if (!entryGroup.length)
+    // case: no entriesOneDay
+    if (!entriesOneDay.length)
         return <></>;
 
     const { id, style, children } = getCleanDefaultProps(otherProps, "AccountEntryContainer");
-    const [entries, setEntries] = useState<JSX.Element[]>([]);
+    const entriesOneDayJSX = mapEntries();
+    const [entries, setEntries] = useState<JSX.Element[]>(entriesOneDayJSX);
+
+    const { filters } = useContext(AccountContext);
 
 
     useEffect(() => {
-        setEntries(mapEntries())
-        
-    }, []);
-    
-    
-    // TODO: not called on change
-    useEffect(() => {
-        log("filter")
         applyFilters();
 
     }, [filters]);
@@ -53,25 +48,19 @@ export default function AccountEntryContainer({entryGroup, filters, ...otherProp
 
     function mapEntries(): JSX.Element[] {
 
-        return entryGroup.map(entry => 
+        return entriesOneDay.map(entry => 
             <AccountEntry key={getRandomString()} entry={entry} />)
     }
 
 
     function applyFilters(): void {
 
-        let filteredEntries: AccountEntryWrapper[] = [];
-
         // category
 
-        // TODO: does not work
-        setEntries(AccountEntryFilterWrapper.filterByCategory(entries, filters)); ////
+        setEntries([...AccountEntryFilter.filterByCategory(entriesOneDayJSX, filters)]); ////
 
         // note
 
-        
-
-        // return filteredEntries;
     }
 
     return (
@@ -79,7 +68,7 @@ export default function AccountEntryContainer({entryGroup, filters, ...otherProp
 
             {/* Date of group */}
             <AlignText align="right">
-                <BlackText>{entryGroup[0].date.toLocaleDateString()}</BlackText>
+                <BlackText>{entriesOneDay[0].dateOfExpense.toLocaleDateString()}</BlackText>
             </AlignText>
             
             {/* Entries of group */}
