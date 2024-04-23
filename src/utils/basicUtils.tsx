@@ -6,16 +6,16 @@ import { fetchAnyReturnBlobUrl } from "./fetchUtils";
 
 export function log(text?: any, obj?: any, debug = false): void {
 
-    if (!debug) {
+    if (!debug) 
         console.log(text);
-        return;
-    }
 
-    try {
-        throw Error(text);
-        
-    } catch (e) {
-        console.log(e);
+    else {
+        try {
+            throw Error(text);
+            
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     console.log(obj);

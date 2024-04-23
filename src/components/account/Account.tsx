@@ -13,6 +13,9 @@ import E_AccountEntryFilter from "../../abstract/AccountEntryFilter";
 import AccountEntryFilter from "../../abstract/AccountEntryFilter";
 import E_AccountEntryCategory from "../../entities/account/E_AccountEntryCategory";
 import Dao from "../../repositories/Dao";
+import Checkbox from "../helpers/Checkbox";
+import { Results } from "realm";
+import { RealmObject } from "realm/dist/public-types/Object";
 
 
 interface Props extends DefaultProps {
@@ -22,26 +25,31 @@ interface Props extends DefaultProps {
 
 
 export default function Account({account, groupedEntries, ...props}: Props) {
-
+    
     const { id, style, children } = getCleanDefaultProps(props, "Account");
     const { total } = account;
     
     // init value is "no filters applied"
     const [filters, setFilters] = useState<AccountEntryFilter>(AccountEntryFilter.getDefaultInstance());
     const [entries, setEntries] = useState<JSX.Element[]>();
-
-    const context = {
-        filters
-    }
-
+    
     const realm = useRealm();
     const dao = new Dao(realm);
-
+    
+    const context = {
+        filters,
+        setFilters
+    }
 
     useEffect(() => {
         setEntries(mapGroupedEntries());
         
     }, []);
+
+
+    useEffect(() => {
+        log(filters)
+    }, [filters])
 
 
     function getAccountTotalStyle(): StyleProp<any> {
@@ -93,7 +101,7 @@ export default function Account({account, groupedEntries, ...props}: Props) {
                 </Text>
 
                 {/* Filters */}
-                <AccountEntryFilters filters={filters} setFilters={setFilters} />
+                <AccountEntryFilters />
 
                 {/* Entries */}
                 {entries}
@@ -126,5 +134,6 @@ const styles = StyleSheet.create({
 
 
 export const AccountContext = createContext({
-    filters: AccountEntryFilter.getDefaultInstance()
+    filters: AccountEntryFilter.getDefaultInstance(),
+    setFilters: (filters: AccountEntryFilter) => {}
 })

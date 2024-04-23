@@ -3,18 +3,18 @@ import AbstractEntity from '../abstract/AbstractEntity';
 import { useObject, useQuery } from '@realm/react';
 import E_Account from '../entities/account/E_Account';
 import { Class } from '../abstract/Class';
+import { log } from '../utils/basicUtils';
 
 
 /**
+ * Class defining generic database query methods that can be used for any entity. Needs a realm instance.
  * 
  * @since 0.0.1
  */
-// TODO
 export default class Dao {
 
     realm: Realm;
 
-    
     constructor(realm: Realm) {
 
         this.realm = realm;

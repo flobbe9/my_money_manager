@@ -57,7 +57,7 @@ export default function AccountEntryContainer({entriesOneDay, ...otherProps}: Pr
 
         // category
 
-        setEntries([...AccountEntryFilter.filterByCategory(entriesOneDayJSX, filters)]); ////
+        setEntries([...filters.filterByCategory(entriesOneDayJSX)]); ////
 
         // note
 

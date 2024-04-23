@@ -1,42 +1,52 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useContext, useEffect, useState } from "react";
 import DefaultProps, { getCleanDefaultProps } from "../../../abstract/DefaultProps";
-import { Text, View } from "react-native";
+import { Text, View,StyleSheet } from "react-native";
 import BlackText from "../../helpers/BlackText";
 import { genericStyles } from "../../../assets/styles/genericsStyles";
 import E_AccountEntryCategory from "../../../entities/account/E_AccountEntryCategory";
 import { getRandomString, log } from "../../../utils/basicUtils";
 import Flex from "../../helpers/Flex";
-import Checkbox from "../../helpers/CheckboxNoState";
 import AccountEntryFilter from "../../../abstract/AccountEntryFilter";
 import { useRealm } from "@realm/react";
 import Dao from "../../../repositories/Dao";
+import { AccountContext } from "../Account";
+import Checkbox from "../../helpers/Checkbox";
+// import Icon from "../../helpers/Icon";
+import Icon from "react-native-vector-icons";
 
 
 interface Props extends DefaultProps {
-    filters: AccountEntryFilter,
-    setFilters: (accountEntryFilters: AccountEntryFilter) => void
 }
 
 
 /**
  * @since 0.0.1
  */
-// TODO: make value listener faster
-export default function AccountEntryCategoryFilter({filters, setFilters, ...otherProps}: Props) {
+export default function AccountEntryCategoryFilter({...otherProps}: Props) {
 
     const { style, children } = getCleanDefaultProps(otherProps, "AccountEntryCategoryFilter");
 
+    const [checkBoxes, setCheckboxes] = useState<JSX.Element[]>([]);
+
+    const { filters, setFilters } = useContext(AccountContext);
+
     const dao = new Dao(useRealm());
+    // TODO: cache this somehow
+    const allCategories = dao.findAll(E_AccountEntryCategory);////
+
+
+    useEffect(() => {
+        setCheckboxes(mapCheckboxes());
+
+    }, [])
 
 
     /**
-     * Updates the ```filters``` state.
-     * 
-     * @param filters to set the state to. Default is ```props.filters```
+     * Updates the ```filters``` state with current ```filters``` object.
      */
-    function updateFilters(newFilters = filters): void {
+    function updateFilters(): void {
 
-        setFilters({...newFilters});
+        setFilters(AccountEntryFilter.getCopy(filters));
     }
 
 
@@ -47,11 +57,11 @@ export default function AccountEntryCategoryFilter({filters, setFilters, ...othe
      */
     function handleValueChange(category: E_AccountEntryCategory): void {
 
-        if (E_AccountEntryCategory.includes(filters.categories, category))
-            E_AccountEntryCategory.remove(filters.categories, category);
+        if (category.isIncluded(filters.categories))
+            filters.removeCategory(category);
 
         else 
-            E_AccountEntryCategory.pushAvoidDuplicate(filters.categories, category);
+            filters.addCategory(category);
 
         updateFilters();
     }
@@ -59,29 +69,50 @@ export default function AccountEntryCategoryFilter({filters, setFilters, ...othe
 
     function mapCheckboxes(): JSX.Element[] {
 
-        const allCategories = dao.findAll(E_AccountEntryCategory);
+        return allCategories.map(category => {
+            const isChecked = category.isIncluded(filters.categories);
 
-        return allCategories.map(category =>
-            <Flex flex="left" key={getRandomString()}>
+            return <Flex flex="left" key={getRandomString()}>
                 {/* Label */}
                 <BlackText>{category.name}</BlackText>
-
+                
                 {/* Checkbox */}
-                <Checkbox 
-                    style={{height: 30, width: 30}}
-                    onValueChange={() => handleValueChange(category)}
-                    defaultValue={E_AccountEntryCategory.includes(filters.categories, category)}
+                <Checkbox
+                    initialValue={isChecked} 
+                    handleValueChange={(isChecked) => handleValueChange(category)}
+                    style={{...styles.checkboxStyle}}
+                    icon={<Icon name="check" size={24} color="black" />}
+                    _inner={{...styles.checkbox_inner}}
+                    _checked={{...styles.checkbox_checked}}
                     />
             </Flex>
-        )
+        })
     }
     
 
     return (
         <View style={{...style, ...genericStyles.flexLeft}}>
-            {mapCheckboxes()}
+            {checkBoxes}
 
             {children}
         </View>
     )
 }
+
+
+const styles = StyleSheet.create({
+    checkboxStyle: {
+        borderWidth: 3,
+        height: 30,
+        width: 30,
+    },
+
+    checkbox_inner: {
+        height: 24,
+        width: 24,
+    }, 
+
+    checkbox_checked: {
+        backgroundColor: "bisque"
+    }
+})

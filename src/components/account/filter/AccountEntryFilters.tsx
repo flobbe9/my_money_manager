@@ -11,15 +11,13 @@ import Dao from "../../../repositories/Dao";
 
 
 interface Props extends DefaultProps {
-    filters: AccountEntryFilter,
-    setFilters: (accountEntryFilter: AccountEntryFilter) => void
 }
 
 
 /**
  * @since 0.0.1
  */
-export default function AccountEntryFilters({filters, setFilters, ...otherProps}: Props) {
+export default function AccountEntryFilters({...otherProps}: Props) {
 
     const { style, children } = getCleanDefaultProps(otherProps, "AccountEntryFilter");
     
@@ -27,7 +25,7 @@ export default function AccountEntryFilters({filters, setFilters, ...otherProps}
     return (
         <View style={{...style}}>
             {/* Categories */}
-            <AccountEntryCategoryFilter filters={filters} setFilters={setFilters} />
+            <AccountEntryCategoryFilter />
 
             {children}
         </View>

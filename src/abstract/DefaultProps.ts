@@ -16,7 +16,7 @@ export function getCleanDefaultProps<T extends DefaultProps>(props: T, component
 
     return {
         id: componentName + (props.id || ""),
-        style: {...props.style},
+        style: props.style,
         children: props.children
     }
 }

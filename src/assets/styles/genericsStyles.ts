@@ -3,6 +3,25 @@ import { StyleProp, StyleSheet } from "react-native";
 
 export const genericStyles: StyleSheet.NamedStyles<any> = {
 
+    hidden: {
+        display: "none"
+    },
+
+    // Border
+    blackSolidBorder: {
+        borderColor: "black",
+        borderStyle: "solid",
+        borderWidth: 1
+    },
+
+    borderNone: {
+        borderWidth: 0
+    },
+
+    backgroundColorTab: {
+        backgroundColor: "rgb(242, 242, 242)"
+    },
+
     // Dont rename these!!!
     textCenter: {
         textAlign: "center"
@@ -34,7 +53,7 @@ export const genericStyles: StyleSheet.NamedStyles<any> = {
         flex: 2
     },
 
-    // marginTop
+    // MarginTop
     mt1: {
         marginTop: 10
     },
@@ -51,7 +70,7 @@ export const genericStyles: StyleSheet.NamedStyles<any> = {
         marginTop: 50
     },
 
-    // marginBottom
+    // MarginBottom
     mb1: {
         marginBottom: 10
     },
@@ -68,7 +87,7 @@ export const genericStyles: StyleSheet.NamedStyles<any> = {
         marginBottom: 50
     },
 
-    // marginRight
+    // MarginRight
     me1: {
         marginRight: 10
     },
@@ -85,7 +104,7 @@ export const genericStyles: StyleSheet.NamedStyles<any> = {
         marginRight: 50
     },
 
-    // marginLeft
+    // MarginLeft
     ms1: {
         marginLeft: 10
     },
@@ -102,7 +121,7 @@ export const genericStyles: StyleSheet.NamedStyles<any> = {
         marginLeft: 50
     },
 
-    // paddingTop
+    // PaddingTop
     pt1: {
         paddingTop: 10
     },
@@ -119,7 +138,7 @@ export const genericStyles: StyleSheet.NamedStyles<any> = {
         paddingTop: 50
     },
 
-    // paddingBottom
+    // PaddingBottom
     pb1: {
         paddingBottom: 10
     },
@@ -136,7 +155,7 @@ export const genericStyles: StyleSheet.NamedStyles<any> = {
         paddingBottom: 50
     },
 
-    // paddingRight
+    // PaddingRight
     pe1: {
         paddingRight: 10
     },
@@ -153,7 +172,7 @@ export const genericStyles: StyleSheet.NamedStyles<any> = {
         paddingRight: 50
     },
     
-    // paddingLeft
+    // PaddingLeft
     ps1: {
         paddingLeft: 10
     },
